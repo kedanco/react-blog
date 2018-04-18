@@ -2,15 +2,76 @@ import React, { Component } from 'react';
 import { Field, reduxForm } from 'redux-form';
 
 class PostsNew extends Component {
-  render() {
+  renderField(field){
     return (
-      <div>
-        PostsNew!
+      <div className="form-group">
+        <label>{field.label}</label>
+        <input
+          className="form-control"
+          type="text"
+          {...field.input}
+        />
+        {field.meta.touched ? field.meta.error : ''}
       </div>
+    );
+  }
+
+  onSubmit(values){
+    console.log(values);
+  }
+
+  render() {
+    const { handleSubmit } = this.props;
+
+    return (
+      <form onSubmit={handleSubmit(this.onSubmit.bind(this))}>
+        <Field 
+          label="Title For Post"
+          name="title" //what piece of state?
+          component={this.renderField} //takes in a function
+        />
+        
+        <Field 
+          label="Categories"
+          name="categories" //what piece of state?
+          component={this.renderField} //takes in a function
+        />
+
+        <Field 
+          label="Post Content"
+          name="content" //what piece of state?
+          component={this.renderField} //takes in a function
+        />
+
+        <button type="submit" className="btn btn-primary">Submit</button>
+
+      </form>
     );
   }
 }
 
+function validate(values) {
+  const errors = {};
+
+  // Validate the inputs from 'values'
+  if(!values.title){
+    errors.title = "Enter a title!";
+  }
+
+  if(!values.categories){
+    errors.categories = "Enter some categories";
+  }
+
+  if(!values.content){
+    errors.content = "Enter some content please";
+  }
+
+  // If errors is empty, the form is fine to svmi
+  return errors;
+
+}
+
 export default reduxForm({
+  validate,
   form: 'PostsNewForm'
 })(PostsNew);
